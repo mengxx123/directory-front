@@ -6,10 +6,10 @@
                  @dragleave="handleDragLeave($event)"
                  @drop="handleDrop($event)"
                  @dragover='allowDrop($event)'>
-                <div class="text">把文件夹拖到这里</div>
-                <!--<ui-raised-button class="btn" label="选择文件夹" icon="folder">-->
-                    <!--<input class="ui-file-button" type="file" webkitdirectory directory @change="handleChange($event)">-->
-                <!--</ui-raised-button>-->
+                <ui-raised-button class="btn" label="选择文件夹" icon="folder">
+                    <input class="ui-file-button" type="file" webkitdirectory directory @change="handleChange($event)">
+                </ui-raised-button>
+                <div class="text">或者把文件夹拖到这里</div>
             </div>
         </div>
         <!--<div v-if="resultObj">-->
@@ -18,12 +18,12 @@
                 <!--<li v-for="item of resultObj">* {{ resultObj[item] }}</li>-->
             <!--</ul>-->
         <!--</div>-->
-        <pre class="pre" v-if="result"><code>{{ result }}</code></pre>
         <div class="btns">
-            <!--<ui-raised-button class="btn" label="配置" icon="settings" @click="config" />-->
+            <!-- <ui-raised-button class="btn" label="配置" icon="settings" @click="config" /> -->
             <ui-raised-button class="btn btn-copy" label="复制" icon="content_copy" v-if="result" :data-clipboard-text="result"  />
             <ui-raised-button class="btn" label="下载" icon="file_download" v-if="result" @click="download" />
         </div>
+        <pre class="pre" v-if="result"><code>{{ result }}</code></pre>
         <ui-dialog :open="dialog" title="配置" @close="close">
             <div>缩进类型</div>
             <div>
@@ -102,6 +102,7 @@
                 console.log('drop')
                 console.log(e)
                 this.execReader(e.dataTransfer)
+                console.log(e.dataTransfer)
             },
             allowDrop(e) {
                 e.preventDefault()
@@ -113,20 +114,27 @@
 //                    $("#msg").text('');
 //                }
                 var files = e.target.files
-                console.log(files)
+                if (!files || !files.length) {
+                    return
+                }
+                console.log('这是啥')
+                console.log(e.target)
+                this.execReader({
+                    files: files
+                })
                 //文件数量
-                actual_filesCount = files.length;
-                if(actual_filesCount > filesCount){
-                    $("#msg").text("文件过多，单次最多可上传"+filesCount+"个文件");
-                    return;
-                }
-                for (var i = 0, f; f = files[i]; ++i){
-                    actual_filesSize += f.size;
-                    if(actual_filesSize > filesSize){
-                        $("#msg").text("单次文件夹上传不能超过"+filesSize/1024/1024+"M");
-                        return;
-                    }
-                }
+                // actual_filesCount = files.length;
+                // if(actual_filesCount > filesCount){
+                //     $("#msg").text("文件过多，单次最多可上传"+filesCount+"个文件");
+                //     return;
+                // }
+                // for (var i = 0, f; f = files[i]; ++i){
+                //     actual_filesSize += f.size;
+                //     if(actual_filesSize > filesSize){
+                //         $("#msg").text("单次文件夹上传不能超过"+filesSize/1024/1024+"M");
+                //         return;
+                //     }
+                // }
             },
             execReader(dataTransfer) {
                 dirReader.exec(dataTransfer, {
@@ -197,6 +205,7 @@
         top: 0;
         bottom: 0;
         opacity: 0;
+        cursor: pointer;
     }
     .btns {
         margin-bottom: 16px;
@@ -216,11 +225,11 @@
         text-align: center;
         .drop-box{
             height: 180px;
-            /*padding-top: 40px;*/
-            padding-top: 80px;
+            padding-top: 56px;
             border: 2px dashed #999;
         }
         .text {
+            margin-top: 16px;
             margin-bottom: 16px;
             color: #999;
             text-align: center;

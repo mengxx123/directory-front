@@ -6,7 +6,7 @@
                 <ui-list-item title="目录结构生成" to="/">
                     <ui-icon slot="left" value="grade"/>
                 </ui-list-item>
-                <ui-list-item title="关于" to="http://about.yunser.com/" target="_blank">
+                <ui-list-item title="关于" href="http://about.yunser.com/" target="_blank">
                     <ui-icon slot="left" value="grade"/>
                 </ui-list-item>
             </ui-list>

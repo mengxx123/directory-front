@@ -15,7 +15,7 @@
     "module": "^1.2.5",
     "muse-ui": "^2.1.0",
     "qs": "^6.5.1",
-    "treeify": "^1.0.1",
+    "treeify": "^1.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vue-server-renderer": "^2.5.9",
