@@ -1,6 +1,7 @@
 <template>
     <my-page title="目录结构生成" :page="page">
-        <div class="upload-box">
+        <div v-if="isMobile" class="un-support">移动端无法选择目录，暂不支持移动端</div>
+        <div class="upload-box" v-if="!isMobile">
             <div ref="dropArea" class="drop-box"
                  @dragenter="handleDragEnter($event)"
                  @dragleave="handleDragLeave($event)"
@@ -37,6 +38,14 @@
             <ui-flat-button slot="actions" @click="close" primary label="重置"/>
             <ui-flat-button slot="actions" primary @click="close" label="确定"/>
         </ui-dialog>
+        <ui-drawer class="filter-box" right :open="filterVisible" @close="toggleFilter()">
+            <ui-appbar title="过滤">
+                <ui-icon-button icon="close" @click="toggleFilter" slot="left" />
+            </ui-appbar>
+            <div class="body">
+                <textarea class="input" v-model="filters"></textarea>
+            </div>
+        </ui-drawer>
     </my-page>
 </template>
 
@@ -47,9 +56,18 @@
     const Clipboard = window.Clipboard
     const saveAs = window.saveAs
 
+    if (!String.prototype.startsWith) {
+        String.prototype.startsWith = function(search, pos) {
+            return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+        }
+    }
+
+    console.log('a/.DS_Store'.startsWith('a/.DS_Store'))
+
     export default {
         data () {
             return {
+                isMobile: false,
                 result: '',
                 resultObj: {
                     a: null,
@@ -62,24 +80,56 @@
                 dialog: false,
                 value: 'simple1',
                 depth: 3,
+                // 过滤
+                filterVisible: false,
+                filters: '.DS_Store\nnode_modules',
                 page: {
                     menu: [
                         {
                             type: 'icon',
+                            icon: 'filter_list',
+                            click: this.toggleFilter,
+                            title: '过滤'
+                        },
+                        // {
+                        //     type: 'icon',
+                        //     icon: 'settings',
+                        //     click: this.open,
+                        //     title: '设置'
+                        // },
+                        {
+                            type: 'icon',
                             icon: 'help',
-                            to: '/directory/help'
+                            href: 'https://project.yunser.com/products/d527cd80170d11e9a6df1f89d5e54720',
+                            target: '_blank',
+                            title: '帮助'
+                        },
+                        {
+                            type: 'icon',
+                            icon: 'apps',
+                            href: 'https://app.yunser.com/',
+                            target: '_blank',
+                            title: '应用'
                         }
                     ]
                 }
             }
         },
         mounted() {
+            this.isMobile = window.screen.width < 480
+            // this.isMobile = true
+
             this.clipboard = new Clipboard('.btn-copy')
-            this.clipboard.on('success', function(e) {
+            this.clipboard.on('success', e => {
                 console.info('Action:', e.action);
                 console.info('Text:', e.text);
                 console.info('Trigger:', e.trigger);
                 e.clearSelection();
+
+                this.$message({
+                    type: 'success',
+                    text: '已复制'
+                })
             });
             this.clipboard.on('error', function(e) {
                 console.error('Action:', e.action);
@@ -90,6 +140,9 @@
             this.clipboard.destroy()
         },
         methods: {
+            toggleFilter() {
+                this.filterVisible = !this.filterVisible
+            },
             handleDragEnter(e) {
                 console.log('handleDragEnter')
                 e.preventDefault()
@@ -142,6 +195,7 @@
                     onComplete: paths => {
                         console.log('完成', paths)
                         paths = paths.sort()
+                        paths = this.filter(paths)
                         this.result = this.arrToObject(paths)
                     }
                 })
@@ -192,6 +246,25 @@
                 this.root = root
                 this.resultObj = obj
                 return root + '\n' + treeify.asTree(obj, true)
+            },
+            filter(paths) {
+                let root = paths[0].split('/')[0]
+                console.log('root', root)
+                let filters = this.filters.split('\n').filter(item => item.length)
+                return paths.filter(path => {
+                    console.log('path', path)
+                    for (let f of filters) {
+                        console.log('if:' + root + '/' + f)
+                        if (path.startsWith(root + '/' + f)) {
+                            console.log('yes')
+                            return false
+                        } else {
+                            console.log('false')
+                            console.log(path + ' not ' + root + '/' + f)
+                        }
+                    }
+                    return true
+                })
             }
         }
     }
@@ -235,5 +308,28 @@
             text-align: center;
         }
     }
-
+    .filter-box {
+        width: 100%;
+        max-width: 400px;
+        .body {
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 16px;
+        }
+        .input {
+            width: 100%;
+            outline: none;
+            height: 400px;
+            padding: 16px;
+        }
+    }
+    .un-support {
+        padding: 120px 0;
+        font-size: 16px;
+        color: #f00;
+        text-align: center;
+    }
 </style>
