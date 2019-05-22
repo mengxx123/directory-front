@@ -5,11 +5,11 @@
                 <img class="logo" src="/static/img/directory.svg">
             </div>
             <ui-list @itemClick="toggle()">
-                <ui-list-item title="目录结构生成" to="/">
-                    <ui-icon slot="left" value="grade"/>
+                <ui-list-item title="首页" to="/">
+                    <ui-icon slot="left" value="home"/>
                 </ui-list-item>
                 <ui-list-item title="关于" href="https://project.yunser.com/products/d527cd80170d11e9a6df1f89d5e54720" target="_blank">
-                    <ui-icon slot="left" value="grade"/>
+                    <ui-icon slot="left" value="info"/>
                 </ui-list-item>
             </ui-list>
         </div>

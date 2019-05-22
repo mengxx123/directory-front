@@ -1,30 +1,33 @@
 <template>
     <my-page title="目录结构生成" :page="page">
-        <div v-if="isMobile" class="un-support">移动端无法选择目录，暂不支持移动端</div>
-        <div class="upload-box" v-if="!isMobile">
-            <div ref="dropArea" class="drop-box"
-                 @dragenter="handleDragEnter($event)"
-                 @dragleave="handleDragLeave($event)"
-                 @drop="handleDrop($event)"
-                 @dragover='allowDrop($event)'>
-                <ui-raised-button class="btn" label="选择文件夹" icon="folder">
-                    <input class="ui-file-button" type="file" webkitdirectory directory @change="handleChange($event)">
-                </ui-raised-button>
-                <div class="text">或者把文件夹拖到这里</div>
+        <div class="common-container container">
+
+            <div v-if="isMobile" class="un-support">移动端无法选择目录，暂不支持移动端</div>
+            <div class="upload-box" v-if="!isMobile">
+                <div ref="dropArea" class="drop-box"
+                    @dragenter="handleDragEnter($event)"
+                    @dragleave="handleDragLeave($event)"
+                    @drop="handleDrop($event)"
+                    @dragover='allowDrop($event)'>
+                    <ui-raised-button class="btn" label="选择文件夹" icon="folder">
+                        <input class="ui-file-button" type="file" webkitdirectory directory @change="handleChange($event)">
+                    </ui-raised-button>
+                    <div class="text">或者把文件夹拖到这里</div>
+                </div>
             </div>
+            <!--<div v-if="resultObj">-->
+                <!--<div>{{ resultObj }}</div>-->
+                <!--<ul>-->
+                    <!--<li v-for="item of resultObj">* {{ resultObj[item] }}</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+            <div class="btns">
+                <!-- <ui-raised-button class="btn" label="配置" icon="settings" @click="config" /> -->
+                <ui-raised-button class="btn btn-copy" label="复制" icon="content_copy" v-if="result" :data-clipboard-text="result"  />
+                <ui-raised-button class="btn" label="下载" icon="file_download" v-if="result" @click="download" />
+            </div>
+            <pre class="pre" v-if="result"><code>{{ result }}</code></pre>
         </div>
-        <!--<div v-if="resultObj">-->
-            <!--<div>{{ resultObj }}</div>-->
-            <!--<ul>-->
-                <!--<li v-for="item of resultObj">* {{ resultObj[item] }}</li>-->
-            <!--</ul>-->
-        <!--</div>-->
-        <div class="btns">
-            <!-- <ui-raised-button class="btn" label="配置" icon="settings" @click="config" /> -->
-            <ui-raised-button class="btn btn-copy" label="复制" icon="content_copy" v-if="result" :data-clipboard-text="result"  />
-            <ui-raised-button class="btn" label="下载" icon="file_download" v-if="result" @click="download" />
-        </div>
-        <pre class="pre" v-if="result"><code>{{ result }}</code></pre>
         <ui-dialog :open="dialog" title="配置" @close="close">
             <div>缩进类型</div>
             <div>
@@ -97,13 +100,13 @@
                         //     click: this.open,
                         //     title: '设置'
                         // },
-                        {
-                            type: 'icon',
-                            icon: 'help',
-                            href: 'https://project.yunser.com/products/d527cd80170d11e9a6df1f89d5e54720',
-                            target: '_blank',
-                            title: '帮助'
-                        },
+                        // {
+                        //     type: 'icon',
+                        //     icon: 'help',
+                        //     href: 'https://project.yunser.com/products/d527cd80170d11e9a6df1f89d5e54720',
+                        //     target: '_blank',
+                        //     title: '帮助'
+                        // },
                         {
                             type: 'icon',
                             icon: 'apps',
